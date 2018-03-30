@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="gradle," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="抽出之前的ShowDevicesTask如下:">
+<meta name="keywords" content="gradle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gradle插件之旅二">
+<meta property="og:url" content="http://yoursite.com/2018/03/30/Gradle插件之旅二/index.html">
+<meta property="og:site_name" content="道地农民">
+<meta property="og:description" content="抽出之前的ShowDevicesTask如下:">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/upload_image/gradle201-the_output.png">
+<meta property="og:updated_time" content="2018-03-30T11:19:21.664Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Gradle插件之旅二">
+<meta name="twitter:description" content="抽出之前的ShowDevicesTask如下:">
+<meta name="twitter:image" content="http://yoursite.com/upload_image/gradle201-the_output.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/03/30/Gradle插件之旅二/"/>
+
+
+
+
+
+  <title>Gradle插件之旅二 | 道地农民</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">道地农民</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">道地农民</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/30/Gradle插件之旅二/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="hncgc1990">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars2.githubusercontent.com/u/6245679?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="道地农民">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Gradle插件之旅二</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-30T19:19:21+08:00">
+                2018-03-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="抽出之前的ShowDevicesTask"><a href="#抽出之前的ShowDevicesTask" class="headerlink" title="抽出之前的ShowDevicesTask"></a>抽出之前的ShowDevicesTask</h4><p>如下:<br><a id="more"></a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">class ShowDevicesTask extends DefaultTask &#123;</span><br><span class="line">    String group = &quot;blogplugin&quot;</span><br><span class="line">    String description = &quot;Runs adb devices command&quot;</span><br><span class="line"></span><br><span class="line">    @TaskAction</span><br><span class="line">    def showDevices() &#123;</span><br><span class="line">        def adbExe = project.android.getAdbExe().toString()</span><br><span class="line">        println &quot;$&#123;adbExe&#125; devices&quot;.execute().text</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>@TaskAction为Task的执行入口,然后在BlogPlugin创建这个Task,如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">void apply(Project target) &#123;</span><br><span class="line">    target.tasks.create(name: &quot;showDevices&quot;, type: ShowDevicesTask)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="一些说明"><a href="#一些说明" class="headerlink" title="一些说明"></a>一些说明</h4><ul>
+<li>在安卓里有两种 build type ,debug和release,大量的Gradle Task都有两个版本,如<code>assembleDebug</code>和<code>assembleRelaese</code></li>
+<li>同时,会有不同的flavours,默认是没有的.如果你新建两个flavour,<code>internal</code>和<code>external</code>,就会有以下的task</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>task</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>assembleInternalDebug</td>
+</tr>
+<tr>
+<td>assembleExternalDebug</td>
+</tr>
+<tr>
+<td>assembleInternalRelease</td>
+</tr>
+<tr>
+<td>assembleExternalRelease</td>
+</tr>
+</tbody>
+</table>
+<p>在apply方法中，我们可以通过<code>target.android.applicationVariants.all</code>获取以上所有的task</p>
+<h4 id="输入和输出目录"><a href="#输入和输出目录" class="headerlink" title="输入和输出目录"></a>输入和输出目录</h4><p>接下来要做一个在文本中读取字符串,然后在指定目录中生成java代码</p>
+<ul>
+<li>首先，创建一个WordsToEnumTask的Task</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">class WordsToEnumTask extends DefaultTask &#123;</span><br><span class="line">    String group = &quot;blogplugin&quot;</span><br><span class="line">    String description = &quot;Makes a list of words into an enum&quot;</span><br><span class="line"></span><br><span class="line">    @TaskAction</span><br><span class="line">    def makeWordsIntoEnums() &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>然后,在安卓项目中的app module　中新建一个 <code> plugin_words.txt</code>文件,且在文件中输入多个字符串,如下</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">THIS</span><br><span class="line">IS</span><br><span class="line">A</span><br><span class="line">JOURNEY</span><br><span class="line">THROUGH</span><br><span class="line">SPACE</span><br></pre></td></tr></table></figure>
+<ul>
+<li>在插件实现类中新增task,如下:</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">target.android.applicationVariants.all &#123; variant -&gt;</span><br><span class="line">    File inputWordFile = new File(target.projectDir, &quot;plugin_words.txt&quot;)</span><br><span class="line">    File outputDir = new File(target.buildDir, &quot;generated/source/wordsToEnum/$&#123;variant.dirName&#125;&quot;)</span><br><span class="line">    def task = target.tasks.create(name: &quot;wordsToEnum$&#123;variant.name.capitalize()&#125;&quot;, type: WordsToEnumTask)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>target.android.applicationVariants.all</code> 在上面提到就是获取所有的variant,然后迭代,每个variant生成一个task. target.projectDir就是app　Module当前目录,target.buildDir就是app Module下的build目录</p>
+<ul>
+<li>此时，双击<code>uploadArchives</code> ,发布到仓库,回到android工程,刷新gradle,就会看到新增的<code>wordsToEnumDebug</code>和<code>wordsToEnumRelease</code>Task</li>
+</ul>
+<h4 id="将输入输出目录传入Task"><a href="#将输入输出目录传入Task" class="headerlink" title="将输入输出目录传入Task"></a>将输入输出目录传入Task</h4><ul>
+<li>将输入输出目录传入到WordsToEnumTask Task中,只要在Task中声明,然后在create时传入即可</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">class WordsToEnumTask extends DefaultTask &#123;</span><br><span class="line">    String group = &quot;blogplugin&quot;</span><br><span class="line">    String description = &quot;Makes a list of words into an enum&quot;</span><br><span class="line"></span><br><span class="line">    File wordsFile</span><br><span class="line">    File outDir</span><br><span class="line"></span><br><span class="line">    @TaskAction</span><br><span class="line">    def makeWordsIntoEnums() &#123;</span><br><span class="line">        println wordsFile.absolutePath</span><br><span class="line">        println outDir.absolutePath</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>传入获取到的File对象即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">target.android.applicationVariants.all &#123; variant -&gt;</span><br><span class="line">    File inputWordFile = new File(target.projectDir, &quot;plugin_words.txt&quot;)</span><br><span class="line">    File outputDir = new File(target.buildDir, &quot;generated/source/wordsToEnum/$&#123;variant.dirName&#125;&quot;)</span><br><span class="line">    def task = target.tasks.create(name: &quot;wordsToEnum$&#123;variant.name.capitalize()&#125;&quot;, type: WordsToEnumTask) &#123;</span><br><span class="line">  NaN. </span><br><span class="line">        outDir = outputDir</span><br><span class="line">        wordsFile = inputWordFile</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>此时,双击uploadArchives,然后回到安卓工程,刷新gradle,然后双击其中一个新增的Task,就可以看到打印的两个路径．</li>
+</ul>
+<h4 id="实现将Txt中的字符串生成代码"><a href="#实现将Txt中的字符串生成代码" class="headerlink" title="实现将Txt中的字符串生成代码."></a>实现将Txt中的字符串生成代码.</h4><ul>
+<li><p>生成代码,我们这里使用<a href="https://github.com/square/javapoet" target="_blank" rel="noopener">JavaPoet</a>,首先在build.gradle中添加 <code>compile ‘com.squareup:javapoet:1.5.1’ </code></p>
+</li>
+<li><p>修改Task的实现</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">class WordsToEnumTask extends DefaultTask &#123;</span><br><span class="line">    String group = &quot;blogplugin&quot;</span><br><span class="line">    String description = &quot;Makes a list of words into an enum&quot;</span><br><span class="line"></span><br><span class="line">    @InputFile</span><br><span class="line">    File wordsFile</span><br><span class="line"></span><br><span class="line">    @OutputDirectory</span><br><span class="line">    File outDir</span><br><span class="line"></span><br><span class="line">    @TaskAction</span><br><span class="line">    def makeWordsIntoEnums() &#123;</span><br><span class="line">        Builder wordsEnumBuilder = TypeSpec.enumBuilder(&quot;WordsEnum&quot;).addModifiers(Modifier.PUBLIC)</span><br><span class="line">        wordsFile.readLines().each &#123;</span><br><span class="line">            wordsEnumBuilder.addEnumConstant(it).build()</span><br><span class="line">        &#125;</span><br><span class="line">        TypeSpec wordsEnum = wordsEnumBuilder.build();</span><br><span class="line">        JavaFile javaFile = JavaFile.builder(&quot;com.afterecho.android.util&quot;, wordsEnum).build();</span><br><span class="line">        javaFile.writeTo(outDir)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>此时，重复生成步骤，切换到Android工程刷新Gradle,并双击新增的Task,就可以看到下图:<br><img src="/upload_image/gradle201-the_output.png" alt=""><br>打开WordsEnum</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public enum WordsEnum &#123;</span><br><span class="line">    THIS,</span><br><span class="line"></span><br><span class="line">    IS,</span><br><span class="line"></span><br><span class="line">    A,</span><br><span class="line"></span><br><span class="line">    JOURNEY,</span><br><span class="line"></span><br><span class="line">    THROUGH,</span><br><span class="line"></span><br><span class="line">    SPACE</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="注册WordsToEnum到工程构建过程"><a href="#注册WordsToEnum到工程构建过程" class="headerlink" title="注册WordsToEnum到工程构建过程."></a>注册WordsToEnum到工程构建过程.</h4><ul>
+<li>使用<code>variant.registerJavaGeneratingTask task, outputDir</code>将Task注册到代码生成过程.刷新gradle时,这个Task就会被执行.如下:</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">class BlogPlugin implements Plugin&lt;Project&gt; &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    void apply(Project target) &#123;</span><br><span class="line">        target.tasks.create(name: &quot;showDevices&quot;, type: ShowDevicesTask)</span><br><span class="line"></span><br><span class="line">        target.android.applicationVariants.all &#123; variant -&gt;</span><br><span class="line">            File inputWordFile = new File(target.projectDir, &quot;plugin_words.txt&quot;)</span><br><span class="line">            File outputDir = new File(target.buildDir, &quot;generated/source/wordsToEnum/$&#123;variant.dirName&#125;&quot;)</span><br><span class="line">            def task = target.tasks.create(name: &quot;wordsToEnum$&#123;variant.name.capitalize()&#125;&quot;, type: WordsToEnumTask) &#123;</span><br><span class="line">                outDir = outputDir</span><br><span class="line">                wordsFile = inputWordFile</span><br><span class="line">            &#125;</span><br><span class="line">            variant.registerJavaGeneratingTask task, outputDir</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>此时,重复生成步骤,切换到安卓工程,刷新Gradle,你就可以看到生成的代码了…..</li>
+</ul>
+<p>翻译:</p>
+<ul>
+<li><a href="https://afterecho.uk/blog/create-a-standalone-gradle-plugin-for-android-part-2.html" target="_blank" rel="noopener">Create a Standalone Gradle plugin for Android - part 2</a></li>
+</ul>
+<ul>
+<li>有关的android　plugin的doc<a href="https://google.github.io/android-gradle-dsl/current/" target="_blank" rel="noopener">参考</a></li>
+<li>有关gradle的doc<a href="https://docs.gradle.org/current/javadoc/" target="_blank" rel="noopener">参考</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/gradle/" rel="tag"># gradle</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/30/Gradle插件之旅一/" rel="next" title="Gradle插件之旅一">
+                <i class="fa fa-chevron-left"></i> Gradle插件之旅一
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://avatars2.githubusercontent.com/u/6245679?s=460&v=4"
+                alt="hncgc1990" />
+            
+              <p class="site-author-name" itemprop="name">hncgc1990</p>
+              <p class="site-description motion-element" itemprop="description">道地农民</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#抽出之前的ShowDevicesTask"><span class="nav-number">1.</span> <span class="nav-text">抽出之前的ShowDevicesTask</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#一些说明"><span class="nav-number">2.</span> <span class="nav-text">一些说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#输入和输出目录"><span class="nav-number">3.</span> <span class="nav-text">输入和输出目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#将输入输出目录传入Task"><span class="nav-number">4.</span> <span class="nav-text">将输入输出目录传入Task</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实现将Txt中的字符串生成代码"><span class="nav-number">5.</span> <span class="nav-text">实现将Txt中的字符串生成代码.</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#注册WordsToEnum到工程构建过程"><span class="nav-number">6.</span> <span class="nav-text">注册WordsToEnum到工程构建过程.</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2013 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">hncgc1990</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
