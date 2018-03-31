@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="gradle," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="构建一个Extension之前的word的文件名称,生成的类名和包名都是写死在程序里的，这里我们通过Extension来在gradle里配置这些变量.首先定义一个BlogPluginExtension">
+<meta name="keywords" content="gradle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gradle插件之旅三">
+<meta property="og:url" content="http://yoursite.com/2018/03/30/Gradle插件之旅三/index.html">
+<meta property="og:site_name" content="道地农民">
+<meta property="og:description" content="构建一个Extension之前的word的文件名称,生成的类名和包名都是写死在程序里的，这里我们通过Extension来在gradle里配置这些变量.首先定义一个BlogPluginExtension">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-03-31T06:04:47.526Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Gradle插件之旅三">
+<meta name="twitter:description" content="构建一个Extension之前的word的文件名称,生成的类名和包名都是写死在程序里的，这里我们通过Extension来在gradle里配置这些变量.首先定义一个BlogPluginExtension">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/03/30/Gradle插件之旅三/"/>
+
+
+
+
+
+  <title>Gradle插件之旅三 | 道地农民</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?96a4a95015f7a58d664be698cf226c8b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">道地农民</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">道地农民</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/30/Gradle插件之旅三/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="hncgc1990">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars2.githubusercontent.com/u/6245679?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="道地农民">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Gradle插件之旅三</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-30T21:16:22+08:00">
+                2018-03-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/03/30/Gradle插件之旅三/" class="leancloud_visitors" data-flag-title="Gradle插件之旅三">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,086
+                </span>
+              
+
+              
+
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="构建一个Extension"><a href="#构建一个Extension" class="headerlink" title="构建一个Extension"></a>构建一个Extension</h4><p>之前的word的文件名称,生成的类名和包名都是写死在程序里的，这里我们通过Extension来在gradle里配置这些变量.首先定义一个<code>BlogPluginExtension</code><br><a id="more"></a><br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BlogPluginExtension</span> &#123;</span></span><br><span class="line">    String words</span><br><span class="line">    String enumClass</span><br><span class="line">    String outputPackage</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>然后在<code>apply()</code>方法中,把这个Extension添加到Project的extensions里</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">target.extensions.create(<span class="string">'bpplugin'</span>, BlogPluginExtension)</span><br></pre></td></tr></table></figure>
+<h4 id="使用这个Extension"><a href="#使用这个Extension" class="headerlink" title="使用这个Extension"></a>使用这个Extension</h4><p>首先,我们在安卓工程中的build.gradle文件中添加这个extension的配置</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bpplugin &#123;</span><br><span class="line">    words <span class="string">"plugin_words.txt"</span></span><br><span class="line">    enumClass <span class="string">"WordsEnum"</span></span><br><span class="line">    outputPackage <span class="string">"com.afterecho.android.util"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这时,我们在apply方法中去打印这些配置:</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println target.extensions.bpplugin.words</span><br><span class="line">println target.extensions.bpplugin.enumClass</span><br><span class="line">println target.extensions.bpplugin.outputPackage</span><br></pre></td></tr></table></figure>
+<p>重新发布,然后在安卓工程刷新,我们看到三个null.这时我们并没有拿到这个配置,实际上需要在project的回调方法afterEvaluate里，才能拿到这个配置，修改成:</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> apply(Project target) &#123;</span><br><span class="line"> target.extensions.create(<span class="string">'bpplugin'</span>, BlogPluginExtension)</span><br><span class="line"></span><br><span class="line"> target.afterEvaluate &#123;</span><br><span class="line"></span><br><span class="line">     println target.extensions.bpplugin.words</span><br><span class="line">     println target.extensions.bpplugin.enumClass</span><br><span class="line">     println target.extensions.bpplugin.outputPackage</span><br><span class="line"></span><br><span class="line">     target.tasks.create(<span class="string">name:</span> <span class="string">"showDevices"</span>, <span class="string">type:</span> ShowDevicesTask)</span><br><span class="line"></span><br><span class="line">     target.android.applicationVariants.all &#123; variant -&gt;</span><br><span class="line">         File inputWordFile = <span class="keyword">new</span> File(target.projectDir, <span class="string">"plugin_words.txt"</span>)</span><br><span class="line">         File outputDir = <span class="keyword">new</span> File(target.buildDir, <span class="string">"generated/source/wordsToEnum/$&#123;variant.dirName&#125;"</span>)</span><br><span class="line">         <span class="keyword">def</span> task = target.tasks.create(<span class="string">name:</span> <span class="string">"wordsToEnum$&#123;variant.name.capitalize()&#125;"</span>, <span class="string">type:</span> WordsToEnumTask) &#123;</span><br><span class="line">             outDir = outputDir</span><br><span class="line">             wordsFile = inputWordFile</span><br><span class="line">         &#125;</span><br><span class="line">         variant.registerJavaGeneratingTask task, outputDir</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>这样就可以看到对应的打印了,接下来，我们替换原来写死的对应的配置,如下:</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BlogPlugin</span> <span class="keyword">implements</span> <span class="title">Plugin</span>&lt;<span class="title">Project</span>&gt; &#123;</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">void</span> apply(Project target) &#123;</span><br><span class="line">        target.extensions.create(<span class="string">'bpplugin'</span>, BlogPluginExtension)</span><br><span class="line"></span><br><span class="line">        target.afterEvaluate &#123;</span><br><span class="line">            target.tasks.create(<span class="string">name:</span> <span class="string">"showDevices"</span>, <span class="string">type:</span> ShowDevicesTask)</span><br><span class="line"></span><br><span class="line">            target.android.applicationVariants.all &#123; variant -&gt;</span><br><span class="line">                File inputWordFile = <span class="keyword">new</span> File(target.projectDir, target.extensions.bpplugin.words)<span class="comment">//这里替换了</span></span><br><span class="line">                File outputDir = <span class="keyword">new</span> File(target.buildDir, <span class="string">"generated/source/wordsToEnum/$&#123;variant.dirName&#125;"</span>)</span><br><span class="line">                <span class="keyword">def</span> task = target.tasks.create(<span class="string">name:</span> <span class="string">"wordsToEnum$&#123;variant.name.capitalize()&#125;"</span>, <span class="string">type:</span> WordsToEnumTask) &#123;</span><br><span class="line">                    outDir = outputDir</span><br><span class="line">                    wordsFile = inputWordFile</span><br><span class="line">                &#125;</span><br><span class="line">                variant.registerJavaGeneratingTask task, outputDir</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对应的WordsToEnumTask:</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">WordsToEnumTask</span> <span class="keyword">extends</span> <span class="title">DefaultTask</span> &#123;</span></span><br><span class="line">    String group = <span class="string">"blogplugin"</span></span><br><span class="line">    String description = <span class="string">"Makes a list of words into an enum"</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@InputFile</span></span><br><span class="line">    File wordsFile</span><br><span class="line"></span><br><span class="line">    <span class="meta">@OutputDirectory</span></span><br><span class="line">    File outDir</span><br><span class="line"></span><br><span class="line">    <span class="meta">@TaskAction</span></span><br><span class="line">    <span class="keyword">def</span> makeWordsIntoEnums() &#123;</span><br><span class="line">        Builder wordsEnumBuilder = enumBuilder(project.extensions.bpplugin.enumClass).addModifiers(Modifier.PUBLIC)<span class="comment">//看这里</span></span><br><span class="line">        wordsFile.readLines().each &#123;</span><br><span class="line">            wordsEnumBuilder.addEnumConstant(it).build()</span><br><span class="line">        &#125;</span><br><span class="line">        TypeSpec wordsEnum = wordsEnumBuilder.build();</span><br><span class="line">        JavaFile javaFile = JavaFile.builder(project.extensions.bpplugin.outputPackage, wordsEnum).build();<span class="comment">//看这里</span></span><br><span class="line">        javaFile.writeTo(outDir)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>重新发布，然后我们就看到正常的输出了</p>
+<h4 id="对配置做一定的校验"><a href="#对配置做一定的校验" class="headerlink" title="对配置做一定的校验"></a>对配置做一定的校验</h4><p>这里配置的属性,都有一定的规则，如果不小心使用了不正确的属性,我们需要对使用者进行一定的警告或者直接抛出异常,在这里，我们只是简单的对enumClass的首字母进行校验,如果使用了小写字母，就抛出一个异常，终止执行，如下:</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(project.extensions.bpplugin.enumClass!=<span class="literal">null</span> &amp;&amp; project.extensions.bpplugin.enumClass.length()&gt;<span class="number">0</span></span><br><span class="line">           &amp;&amp; project.extensions.bpplugin.enumClass.codePointAt(<span class="number">0</span>)&gt;=<span class="number">65</span> &amp;&amp;project.extensions.bpplugin.enumClass.codePointAt(<span class="number">0</span>)&lt;=<span class="number">90</span>)&#123;</span><br><span class="line">               println(<span class="string">"以大写字母$&#123;project.extensions.bpplugin.enumClass.charAt(0)&#125;开头"</span>)</span><br><span class="line">           &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">               println(<span class="string">"不是大写字母开头"</span>)</span><br><span class="line">               <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"bpplugin's enumClass must start with a capital"</span>)</span><br><span class="line">           &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="一点的优化"><a href="#一点的优化" class="headerlink" title="一点的优化"></a>一点的优化</h4><blockquote>
+<p>Gradle is clever enough to not do unnecessary work. If the output of a task or the input of a task haven’t changed then it won’t waste time by running the task again.</p>
+</blockquote>
+<p>就是说，Gradle会根据Task的input或者ouput的变化是否来判断是否再执行一次,如果不变,就不会执行这个Task<br>所以,我们这里替换Task里的变量从plugin里传入，并添加上@Input的注解,如下:</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">WordsToEnumTask</span> <span class="keyword">extends</span> <span class="title">DefaultTask</span> &#123;</span></span><br><span class="line">        String group = <span class="string">"blogplugin"</span></span><br><span class="line">        String description = <span class="string">"Makes a list of words into an enum"</span></span><br><span class="line"></span><br><span class="line">        <span class="meta">@InputFile</span></span><br><span class="line">        File wordsFile</span><br><span class="line"></span><br><span class="line">        <span class="meta">@OutputDirectory</span></span><br><span class="line">        File outDir</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Input</span></span><br><span class="line">        String enumClassName</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Input</span></span><br><span class="line">        String outputPackageName</span><br><span class="line"></span><br><span class="line">        <span class="meta">@TaskAction</span></span><br><span class="line">        <span class="keyword">def</span> makeWordsIntoEnums() &#123;</span><br><span class="line">            Builder wordsEnumBuilder = enumBuilder(enumClassName).addModifiers(Modifier.PUBLIC)</span><br><span class="line">            wordsFile.readLines().each &#123;</span><br><span class="line">                wordsEnumBuilder.addEnumConstant(it).build()</span><br><span class="line">            &#125;</span><br><span class="line">            TypeSpec wordsEnum = wordsEnumBuilder.build();</span><br><span class="line">            JavaFile javaFile = JavaFile.builder(outputPackageName, wordsEnum).build();</span><br><span class="line">            javaFile.writeTo(outDir)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>在apply方法中，传入变量</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BlogPlugin</span> <span class="keyword">implements</span> <span class="title">Plugin</span>&lt;<span class="title">Project</span>&gt; &#123;</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">void</span> apply(Project target) &#123;</span><br><span class="line">        target.extensions.create(<span class="string">'bpplugin'</span>, BlogPluginExtension)</span><br><span class="line"></span><br><span class="line">        target.afterEvaluate &#123;</span><br><span class="line">            target.tasks.create(<span class="string">name:</span> <span class="string">"showDevices"</span>, <span class="string">type:</span> ShowDevicesTask)</span><br><span class="line"></span><br><span class="line">            target.android.applicationVariants.all &#123; variant -&gt;</span><br><span class="line">                File inputWordFile = <span class="keyword">new</span> File(target.projectDir, target.extensions.bpplugin.words)</span><br><span class="line">                File outputDir = <span class="keyword">new</span> File(target.buildDir, <span class="string">"generated/source/wordsToEnum/$&#123;variant.dirName&#125;"</span>)</span><br><span class="line">                <span class="keyword">def</span> task = target.tasks.create(<span class="string">name:</span> <span class="string">"wordsToEnum$&#123;variant.name.capitalize()&#125;"</span>, <span class="string">type:</span> WordsToEnumTask) &#123;</span><br><span class="line">                    outDir = outputDir</span><br><span class="line">                    wordsFile = inputWordFile</span><br><span class="line">                    enumClassName = target.extensions.bpplugin.enumClass</span><br><span class="line">                    outputPackageName = target.extensions.bpplugin.outputPackage</span><br><span class="line">                &#125;</span><br><span class="line">                variant.registerJavaGeneratingTask task, outputDir</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后，如果你修改了类名，那么之前生成的类是不会删除的，所以我们在Task执行前加入目录的清空</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">outDir.deleteDir()</span><br></pre></td></tr></table></figure>
+<h4 id="翻译"><a href="#翻译" class="headerlink" title="翻译"></a>翻译</h4><p><a href="https://afterecho.uk/blog/create-a-standalone-gradle-plugin-for-android-part-3.html" target="_blank" rel="noopener">Create a Standalone Gradle plugin for Android - part 3</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/gradle/" rel="tag"># gradle</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/30/Gradle插件之旅一/" rel="next" title="Gradle插件之旅一">
+                <i class="fa fa-chevron-left"></i> Gradle插件之旅一
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://avatars2.githubusercontent.com/u/6245679?s=460&v=4"
+                alt="hncgc1990" />
+            
+              <p class="site-author-name" itemprop="name">hncgc1990</p>
+              <p class="site-description motion-element" itemprop="description">道地农民</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/hncgc1990" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#构建一个Extension"><span class="nav-number">1.</span> <span class="nav-text">构建一个Extension</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用这个Extension"><span class="nav-number">2.</span> <span class="nav-text">使用这个Extension</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对配置做一定的校验"><span class="nav-number">3.</span> <span class="nav-text">对配置做一定的校验</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#一点的优化"><span class="nav-number">4.</span> <span class="nav-text">一点的优化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#翻译"><span class="nav-number">5.</span> <span class="nav-text">翻译</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2013 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">hncgc1990</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">2.8k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("V3yOLjFGnyiHE6cdrWgN64xD-gzGzoHsz", "zKfh8qictSB6VaOtIQ6moMyO");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
